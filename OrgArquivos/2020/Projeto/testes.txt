@@ -1,0 +1,34 @@
+1 arq03.csv arquivo.bin
+
+2 arquivo.bin
+
+3 arquivo.bin 1 cidadeMae "MANAUS"
+3 arquivo.bin 2 estadoBebe "SP" idadeMae 18
+
+5 binario14.bin 2
+2 estadoBebe "SP" sexoBebe "2"
+1 cidadeBebe "SAO PAULO"
+
+6 arquivo.bin 4 NULO NULO 3 28 "2019-05-20" "2" NULO NULO
+"ARARAQUARA" NULO 5 NULO NULO "1" "SP" "SP"
+NULO "PIRACICABA" 6 NULO NULO NULO NULO NULO
+"SAO PAULO" "SAO PAULO" 7 28 "2020-06-09" "1" "SP" "SP"
+
+7 arquivo.bin 2
+3 1 cidadeMae "GUARULHOS" 
+5 2 cidadeMae "SALVADOR" dataNascimento NULO
+
+7 arquivo.bin 2
+5 5 cidadeMae "GUARAPA" cidadeBebe "ILIA" dataNascimento "2020-05-05" sexoBebe "2" idadeMae 15
+7 2 estadoBebe "SP" sexoBebe NULO
+
+
+7 arquivo.bin 3
+5 2 estadoMae "SP" estadoBebe "SP"
+7 2 cidadeBebe "ITAPEVA" dataNascimento "2017-04-08"
+9 1 idadeMae NULO
+
+7 binario03.bin 3
+36 2 estadoMae "SP" estadoBebe "SP"
+520 2 cidadeBebe "ITAPEVA" dataNascimento "2017-04-08"
+1059 1 idadeMae NULO
