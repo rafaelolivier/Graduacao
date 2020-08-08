@@ -1,0 +1,63 @@
+body {
+	background-color: papayawhip;
+}
+
+ul{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: black;
+}
+
+li {
+	float: left;
+}
+
+li a{
+	display: block;
+	color: yellow;
+	text-align: center;
+	padding: 8px 60px;
+	text-decoration: none;
+}
+
+li a:hover{
+	background-color: gray;
+	color: black;
+}
+
+.item {
+	background-color: papayawhip;
+	text-align: center;
+	color:red;
+	width:25%;
+	height: 400px;
+}
+
+.item:hover{
+	background-color:gray;
+}
+
+.item img {
+	width: 100%;
+	height: 100%;
+	min-width: 120px;
+	min-height:120px;
+	max-width: 240px;
+	max-height:240px;
+}
+
+.produto img{
+	background-color: papayawhip;
+	text-align: center;
+	color:red;
+	height: 400px;
+}
+
+.rodape {
+	padding: 5px;
+	width:100%;
+	overflow:hidden;
+	background-color:lightgreen;
+}

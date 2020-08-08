@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Cachorro Pensador</title>
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+
+        <style>
+            body {
+                background-color: papayawhip;
+            }
+            .item {
+                background-color: papayawhip;
+                text-align: center;
+                color:red;
+                padding: 5px;
+            }
+            .item:hover {
+                background-color: #ffc260;
+            }
+            .item img {
+                min-width: 120px;
+                min-height:120px;
+                max-width: 240px;
+                max-height:240px;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="row">
+            <img src="cachorropensador.png" class="img-rounded" alt="Cachorro Pensador" style="width: 100%;">
+        </div>
+
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header"><a class="navbar-brand" onclick="construirPrincipal()">Cachorro Pensador</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <li class="dropdown">
+                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Produtos<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a onclick="produtosTodos()">Todos</a></li>
+                                <li><a onclick="produtosAnfibios()">Anfíbios</a></li>
+                                <li><a onclick="produtosAves()">Aves</a></li>
+                                <li><a onclick="produtosMamiferos()">Mamíferos</a></li>
+                                <li><a onclick="produtosPeixes()">Peixes</a></li>
+                                <li><a onclick="produtosRepteis()">Répteis</a></li>
+                                <li><a onclick="produtosOutros()">Outros</a></li>
+                            </ul>
+                        </li>
+                        <li><a onclick="construirAnimais()">Animais</a></li>
+                        <li><a onclick="construirServicos()">Serviços</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a onclick="construirCarrinho('#main_body', STATUS_PENDING)" id='botaoCarrinho' style='display: none;'><span class="glyphicon glyphicon-shopping-cart"></span> Carrinho</a></li>
+                    <li><a onclick="construirCadastroUsuario()" id='botaoCadastrar'><span class="glyphicon glyphicon-user"></span> Cadastrar</a></li>
+                    <li><a onclick="construirLogin()" id='botaoLogin'><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!--os proximos 2 divs estão vazios de propósito, serão modificados pelo jquery-->
+        <div class="row">
+            <h1 id="main_title" style="text-align: center"></h1>
+        </div>
+        <div id="main_body" class="row" style="margin: 15px">
+            
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <p class="text-center">Telefone: +55(16)50123456</p>
+            </div>
+            <div class="col-sm-4">
+                <p class="text-center">Endereço: Rua Episcopal, XYZ. Centro, São Carlos.</p>
+            </div>
+            <div class="col-sm-4">
+                <p class="text-center">Email: cachorro@pensador.com</p>
+            </div>
+        </div>
+
+        <script>
+            const TODOS = "";
+            const MAMIFERO = "m";
+            const AVE = "av";
+            const ANFIBIO = "an";
+            const PEIXE = "p";
+            const REPTIL = "r";
+            const ANIMAL_OUTRO = "o";
+            
+            const PROD_PROD = "pp";
+            const PROD_ANI = "pa";
+            const PROD_SERV = "ps";
+            
+            const STATUS_DONE = "sd";
+            const STATUS_PENDING = "sp";
+            
+            const PROD_DESTAQUE = "pd";
+            const PROD_NORMAL = "pn";
+            
+            const dadosAnimais = [{
+                    img:"imagens/produtos/animais/cachorro.jpg",
+                    nome:"Filhote de Golden Retriever",
+                    descricao:"Cachorro comum.",
+                    preco: 1200,
+                    precoAtual: 1200,
+                    estoque: 6,
+                    animal: MAMIFERO
+                }, {
+                    img:"imagens/produtos/animais/cobra.jpg",
+                    nome:"Cobra do milho",
+                    descricao:"Cobra comum.",
+                    preco: 800,
+                    precoAtual: 800,
+                    estoque: 2,
+                    animal: REPTIL
+                }, {
+                    img:"imagens/produtos/animais/angora.jpg",
+                    nome:"Gato Angorá",
+                    descricao:"Gato angorá comum.",
+                    preco: 600,
+                    precoAtual: 600,
+                    estoque: 2,
+                    animal: MAMIFERO
+                }, {
+                    img:"imagens/produtos/animais/iguana.jpg",
+                    nome:"Iguana verde",
+                    descricao:"Iguana treinada para combate com pinças de contenção para répteis.",
+                    preco: 2500000,
+                    precoAtual: 2500000,
+                    estoque: 1,
+                    animal: REPTIL
+                }
+            ];
+        
+            const dadosProdutos = [{
+                    img: "imagens/produtos/racaocachorro.jpg",
+                    nome: "Ração Golden Special",
+                    descricao: "Ração padrão para Golden Retriever.",
+                    preco: 149.99,
+                    precoAtual: 129.99,
+                    estoque: 25,
+                    animal: MAMIFERO,
+                    destaque: PROD_DESTAQUE
+                }, {
+                    img: "imagens/produtos/pinca.jpg",
+                    nome: "Pinça de contenção para répteis",
+                    descricao: "Pinça especial para conter répteis, especialmente cobras.",
+                    preco: 329.99,
+                    precoAtual: 279.99,
+                    estoque: 25,
+                    animal: REPTIL,
+                    destaque: PROD_DESTAQUE
+                }, {
+                    img: "imagens/produtos/gaiola.jpg",
+                    nome: "Viveiro Chalesco Mad Luxo",
+                    descricao: "Viveiro luxuoso para pássaros.",
+                    preco: 2779.99,
+                    precoAtual: 2779.99,
+                    estoque: 34,
+                    animal: AVE,
+                    destaque: PROD_DESTAQUE
+                }, {
+                    img: "imagens/produtos/shampoo.jpg",
+                    nome: "Shampoo Antibacteriano Agener União Dr.Clean",
+                    descricao: "Shampoo antibacteriano para cães e gatos.",
+                    preco: 169.99,
+                    precoAtual: 119.99,
+                    estoque: 3,
+                    animal: MAMIFERO,
+                    destaque: PROD_DESTAQUE
+                }, {
+                    img: "imagens/produtos/maquina.jpg",
+                    nome: "Máquina para Tosa Basic Dog Wahl",
+                    descricao: "Máquina de tosa para cães e gatos.",
+                    preco: 129.99,
+                    precoAtual: 79.99,
+                    estoque: 7,
+                    animal: MAMIFERO,
+                    destaque: PROD_DESTAQUE
+                }, {
+                    img: "imagens/produtos/composteira.jpg",
+                    nome: "Composteira Doméstica Minhocário",
+                    descricao: "Composteira par acriação doméstica de minhocas e adubo orgânico.",
+                    preco: 187.99,
+                    precoAtual: 175.99,
+                    estoque: 28,
+                    animal: ANIMAL_OUTRO,
+                    destaque: PROD_DESTAQUE
+                }, {
+                    img: "imagens/produtos/racaoiguanajabuti.jpg",
+                    nome: "Ração para Iguanas e Jabutis",
+                    descricao: "Ração comum para iguanas e jabutis.",
+                    preco: 9.99,
+                    precoAtual: 9.99,
+                    estoque: 1,
+                    animal: REPTIL,
+                    destaque: PROD_DESTAQUE
+                }, {
+                    img: "imagens/produtos/rede.jpg",
+                    nome: "Rede de Captura de Aguas Vivas",
+                    descricao: "Caso alguma água viva apareça voando para cidade, você estará preparado.",  
+                    preco: 69.99,
+                    precoAtual: 42.99,
+                    estoque: 9,
+                    animal: ANIMAL_OUTRO,
+                    destaque: PROD_DESTAQUE
+                },
+            ];
+
+            const dadosServicos = [{
+                    img: "imagens/servicos/banho.jpg",
+                    nome: "Banho",
+                    descricao: "Banho quente para pets.",
+                    preco: "De R$30,00 até R$65,00 reais, dependendo do tamanho do seu pet.",
+                    dias: "12345",
+                    horarioInicial: "08:00",
+                    horarioFinal: "16:00"
+                } , {
+                    img: "imagens/servicos/tosa.jpg",
+                    nome: "Tosa",
+                    descricao: "Tosa para seus pets.",
+                    preco: "De R$30,00 até R$55,00 reais, dependendo do tamanho do seu pet.",
+                    dias: "12345",
+                    horarioInicial: "08:00",
+                    horarioFinal: "16:00"
+                } , {
+                    img: "imagens/servicos/veterinario.jpg",
+                    nome: "Veterinário",
+                    descricao: "Uma equipe de veterinários especializados para cuidar dos seus pets.",
+                    preco: "A definir.",
+                    dias: "135",
+                    horarioInicial: "10:00",
+                    horarioFinal: "16:00"
+                } , {
+                    img: "imagens/servicos/adestramento.jpg",
+                    nome: "Adestramento",
+                    descricao: "Adestramento para animais de qualquer idade.",
+                    preco: "R$45,50 por sessão.",
+                    dias: "1245",
+                    horarioInicial: "08:00",
+                    horarioFinal: "12:00"
+                } , {
+                    img: "imagens/servicos/hotel.jpg",
+                    nome: "Hotel para pets",
+                    descricao: "Cuidamos do seu animal quando você não puder ficar em casa.",
+                    preco: "R$50,00 por dia.",
+                    dias: "0123456",
+                    horarioInicial: "08:00",
+                    horarioFinal: "16:00"
+                }
+            ];
+            
+            var userID = -1;
+            var db = new Dexie("petshop_database");
+            db.version(1).stores({
+                    produtos: '++id,img,nome,descricao,preco,precoAtual,estoque,animal, destaque',
+                    //não sei como usar quando é '++id, idcliente, *tipoproduto, *idproduto, *produtoqnt', documentação nada clara
+                    carrinho: '++id, idcliente, tipoproduto, idproduto, produtoqnt,status', 
+                    clientes: '++id, nome, telefone, email, nascimento, gender, login, senha',
+                    animais: '++id,img,nome,descricao,preco,precoAtual,estoque,animal',
+                    animalDeCliente: '++id, donoid, nome, nascimento, sexo, tipo, raca',
+                    servicos: '++id,img,nome,descricao,preco,dias,horarioInicial,horarioFinal',
+                    servicosHorarios: '++id,servicoid, clienteid,dia,horario'
+            });
+            db.open();
+    
+            db.on('populate', function(){
+                for (let i = 0; i < dadosAnimais.length; i++){
+                    db.animais.put(dadosAnimais[i]);
+                }
+                for (let i = 0; i < dadosProdutos.length; i++){
+                    db.produtos.put(dadosProdutos[i]);
+                }
+                for(let i = 0; i < dadosServicos.length; i++){
+                    db.servicos.put(dadosServicos[i]);
+                }
+                
+                db.clientes.put({
+                    nome: "Admin",
+                    telefone: "000000000",
+                    email: "cachorro@pensador.com",
+                    nascimento: "0001-01-01",
+                    gender: "nbg",
+                    login: "admin",
+                    senha: "123123"
+                });
+                
+                db.servicosHorarios.put({
+                    servicoid: 1,
+                    clienteid: 1,
+                    dia: "2018-06-05",
+                    horario: "08:00"
+                });
+            });
+
+            $(document).ready(function(){
+                construirPrincipal();
+            });
+
+            function construirPrincipal() {
+                $("#main_title").text("Produtos em Destaque");
+                $("#main_body").text("");
+                $("#main_body").append(
+                    "<div class='row'>" +
+                    "<div id='celula00' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula01' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula02' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula03' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='row'>" +
+                    "<div id='celula10' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula11' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula12' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula13' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "</div>");
+
+                let i = 0, j = 0;
+                db.produtos.where("destaque").equals(PROD_DESTAQUE).limit(8).each(function(produto){
+                    construirProduto('#celula'+i+j, produto);
+                    j++;
+                    if(j == 4){
+                        j = 0;
+                        i++;
+                    }
+                });
+            }
+
+            function construirAnimais(){
+                console.log($('#tempo').val());
+                $("#main_title").text("Animais");
+                $("#main_body").text("");
+                $("#main_body").append(
+                    "<div class='row'>" +
+                    "<div id='celula0' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula1' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula2' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula3' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "</div>");
+
+                let i = 0;
+                db.animais.where("id").belowOrEqual(4).limit(4).each(function(animal){
+                    construirAnimal('#celula'+i, animal);
+                    i++;
+                });
+            }
+            
+            function construirAnimal(celula, animal) {
+                $(celula).text("");
+                $(celula).append(
+                    "<div class='row'><img src='" + animal.img + "' class='img-rounded' alt='" + animal.nome + "'></div>" +
+                    "<div class='row'><p>" + animal.nome + "</p></div>");
+                $(celula).append("<div class='row'><p>R$" + animal.preco + "</p></div>");
+                $(celula).attr("onclick", "construirDetalheAnimal("+animal.id+")");
+            }
+            
+            function construirDetalheAnimal(id){
+                $("#main_title").text("Detalhe do Animal");
+                db.animais.get(id).then(function(animal){
+                    $('#main_body').text("");
+                    let string = "<div class='row'>"+
+                            "<img class='col-sm-4 img-rounded' src='"+animal.img+"' atl='"+animal.nome+"'>"+
+                            "<div class='col-sm-8' style='padding: 20px'>"+
+                                "<p>"+animal.nome+"</p>"+
+                                "<p>"+animal.descricao+"</p>"+
+                                "<p>R$"+animal.precoAtual+"</p>";
+                    if (userID != -1){
+                        string += "<div class='row' style='padding: 20px'>"+
+                                    "<input type='number' id='btnQnt' value='1' min='1' max='"+animal.estoque+"'>" +
+                                    "<button class='btn btn-primary' type='button' "+
+                                    "onclick='addCarrinho("+'"'+PROD_ANI+'", "#btnQnt"'+", "+animal.id+")' style='margin-left: 20px'> Adicionar ao Carrinho</button>"+
+                                "</div>"
+                    }
+                    string += "</div></div>";
+                    $('#main_body').append(string);
+                });
+            }
+            
+            function construirProduto(celula, produto){
+                $(celula).text("");
+                $(celula).append(
+                    "<div class='row'><img src='" + produto.img + "' class='img-rounded' alt='" + produto.nome + "'></div>" +
+                    "<div class='row'><p>" + produto.nome + "</p></div>");
+                if (produto.precoAtual == produto.preco){
+                    $(celula).append("<div class='row'><p>R$"+produto.precoAtual+"</p></div>");
+                } else {
+                    $(celula).append("<div class='row'><p>De <del>R$"+produto.preco+"</del> por R$"+produto.precoAtual+"!</p></div>");
+                }
+                $(celula).attr("onclick", "construirDetalheProduto("+produto.id+")");   
+            }
+            
+            function produtosTodos(){
+                $("#main_title").text("Produtos");
+                construirProdutoDoTipo(TODOS);
+            }
+            
+            function produtosAnfibios(){
+                $("#main_title").text("Produtos para Anfíbios");
+                construirProdutoDoTipo(ANFIBIO);
+            }
+            
+            function produtosAves(){
+                $("#main_title").text("Produtos para Aves");
+                construirProdutoDoTipo(AVE);
+            }
+            
+            function produtosMamiferos(){
+                $("#main_title").text("Produtos para Mamíferos");
+                construirProdutoDoTipo(MAMIFERO);
+            }
+            
+            function produtosPeixes(){
+                $("#main_title").text("Produtos para Peixes");
+                construirProdutoDoTipo(PEIXE);
+            }
+            
+            function produtosRepteis(){
+                $("#main_title").text("Produtos para Répteis");
+                construirProdutoDoTipo(REPTIL);
+            }
+            
+            function produtosOutros(){
+                $("#main_title").text("Produtos para Outros Animais");
+                construirProdutoDoTipo(ANIMAL_OUTRO);
+            }
+            
+            function construirProdutoDoTipo(tipo){
+                $("#main_body").text("");
+                $("#main_body").append(
+                    "<div class='row'>" +
+                    "<div id='celula00' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula01' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula02' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula03' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='row'>" +
+                    "<div id='celula10' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula11' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula12' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "<div id='celula13' class='col-sm-3 item'>" +
+                    "</div>" +
+                    "</div>");
+
+                let i = 0, j = 0;
+                let produtos = db.produtos.where("animal").equals(tipo).limit(8);
+                if(tipo === TODOS) produtos = db.produtos.limit(8);
+                produtos.each(function(prod){
+                    construirProduto('#celula'+i+j, prod);
+                    j++;
+                    if(j >= 4){
+                        j = 0;
+                        i++;
+                    }
+                }).then(function(){
+                    let count = 0;
+                    for(let i = 0; i < 2; i++){
+                        for(let j = 0; j < 4; j++){
+                            if ($('#celula'+i+j).is(':empty')){
+                                count++;
+                                $('#celula'+i+j).remove();
+                            }
+                        }
+                    }
+                    if(count == dadosProdutos.length){
+                        $('#main_body').text("");
+                        $('#main_body').append(
+                            "<div class='row'>" + 
+                                "<p class='col-sm=12' style='text-align: center'>Nenhum produto nessa categoria.</p>" +
+                            "</div>");
+                    }
+                });
+            }
+            
+            function construirDetalheProduto(id){
+                $("#main_title").text("Detalhe do Produto");
+                db.produtos.get(id).then(function(prod){
+                    $('#main_body').text("");
+                    let string = "<div class='row'>"+
+                            "<img class='col-sm-4 img-rounded' src='"+prod.img+"' atl='"+prod.nome+"'>"+
+                            "<div class='col-sm-8' style='padding: 20px'>"+
+                                "<p>"+prod.nome+"</p>"+
+                                "<p>"+prod.descricao+"</p>"+
+                                "<p>R$"+prod.precoAtual+"</p>";
+                    if (userID != -1){
+                        string += "<div class='row' style='padding: 20px'>"+
+                                    "<input type='number' id='btnQnt' value='1' min='1' max='"+prod.estoque+"'>" +
+                                    "<button class='btn btn-primary' type='button' "+
+                                    "onclick='addCarrinho("+'"'+PROD_PROD+'", "#btnQnt"'+", "+prod.id+")' style='margin-left: 20px'> Adicionar ao Carrinho</button>"+
+                                "</div>"
+                    }
+                    string += "</div></div>";
+                    $('#main_body').append(string);
+                });
+            }
+            
+            function construirServicos(){
+                $('#main_body').text("");
+                let j = 0;
+                db.servicos.where("id").belowOrEqual(dadosServicos.length).each(function(servico){
+                    construirServico('#main_body', servico);
+                    $('#main_body').append("<br>");
+                    j++;
+                });
+            }
+            
+            function construirServico(celula, servico){
+                let string = "<div class='row'>"+
+                        "<img class='col-sm-4 img-rounded' src='"+servico.img+"' atl='"+servico.nome+"'>"+
+                        "<div class='col-sm-8' style='padding: 0px'>"+
+                            "<h3>"+servico.nome+"</h3>"+    
+                            "<p>"+servico.descricao+"</p>"+
+                            "<p>"+servico.preco+"</p>";
+                if (userID != -1){
+                    string += "<div class='row' style='padding: 20px'>"+
+                                "<input id='agendaForm"+servico.id+"hora' name='hora' type='time' value='"+servico.horarioInicial+"' min='"+servico.horarioInicial+"' max='"+servico.horarioFinal+"'>" +
+                                "<input id='agendaForm"+servico.id+"data' type='date' name='dia'>"+
+                            "</div>"+
+                            "<div class='row' style='padding: 20px'>"+
+                                "<button type='button' class='btn btn-primary' onclick='agendarServico("+servico.id+")'>Agendar serviço</button>"
+                            "</div>";
+                }
+                string += "</div></div>";
+                $(celula).append(string);
+            }
+            
+            function agendarServico(id){
+                let count = 0
+                db.transaction('rw', db.servicosHorarios, function(){
+                    db.servicosHorarios.where("dia").equals($('#agendaForm'+id+'data').val()).each(function(horario){
+                        if(horario.servicoid == id && horario.horario == $('#agendaForm'+id+'hora').val()){
+                            count++;
+                        }
+                    }).then(function(){
+                        if(count == 0){
+                            db.servicosHorarios.put({
+                                servicoid: id,
+                                clienteid: userID,
+                                dia: $('#agendaForm'+id+'data').val(),
+                                horario: $('#agendaForm'+id+'hora').val()
+                            });
+                            alert("Horário disponível e reservado.");
+                        }
+                        else alert("Horário indisponível.");
+                    });
+                });
+            }
+            
+            function addCarrinho(prodtype, celula, id){
+                db.carrinho.put({
+                    idcliente: userID,
+                    tipoproduto: prodtype,
+                    idproduto: id,
+                    produtoqnt: $(celula).val(),
+                    status: STATUS_PENDING
+                });
+                alert("Adicionado ao carrinho!");
+            }
+            
+            function removerCarrinho(id){
+                db.carrinho.delete(id).then(function(){
+                    construirCarrinho('#main_body', STATUS_PENDING);
+                });
+            }
+            
+            function construirCadastroUsuario(){
+                $("#main_title").text("Cadastro");
+                $("#main_body").text("");
+                $("#main_body").append(
+                    "<form align='center'>" +
+                    "Nome: <input type='text' name='nome' id='nome'>" +
+                    "<br><br>" +
+                    "Telefone: <input type='text' name=''telefone' id='telefone'>" +
+                    "<br><br>" +
+                    "Email: <input type='email' name='email' id='email'>" +
+                    "<br><br>" +
+                    "Data de Nascimento: <input type='date' name='nascimento' id='birth'>" +
+                    "<br><br>" +
+                    "Sexo: " +
+                    "<input type='radio' name='sexo' id='male' value='m'> Masculino  " +
+                    "<input type='radio' name='sexo' id='female' value='f'> Feminino  " +
+                    "<input type='radio' name='sexo' id='nonbinarygender' value='nbg'> Outro  " +
+                    "<br><br><br>" +
+                    "Login: <input type='text' name='login' id='login'>" +
+                    "<br><br>" +
+                    "Senha: <input type='password' name='senha' id='senha'>" +
+                    "<br><br>" +
+                    "Confirmar senha: <input type='password' name='conf_senha' id='confirmarSenha'>" +
+                    "<br><br>" +
+                    "<button type='button' class='btn btn-primary' onclick='saveUserData()'>Finalizar Cadastro</button>" +
+                    "<br><br>" +
+                    "</form>");
+            }
+            
+            function saveUserData(){
+                db.clientes.where("login").equals($('#login').val()).first(function(cliente){
+                    if(cliente == undefined){
+						if($('#senha').val() === ""){
+							alert("Senha inválida.");
+							return;
+						}
+                        if($('#senha').val() != $('#confirmarSenha').val()){
+                            alert("Confirmação de senha incorreta.");
+                            return;
+                        }
+                    
+                        var i = 'nbg';
+                        if($("#female").val() == 'on') i = 'f';
+                        else if($("#male").val() == 'on') i = 'm';
+                        
+                        db.clientes.put({           
+                            nome: $("#nome").val(),
+                            telefone: $("#telefone").val(),
+                            email: $("#email").val(),
+                            nascimento: $("#birth").val(),
+                            gender: i,
+                            login: $("#login").val(),
+                            senha: $("#senha").val()
+                        });
+                        
+                        alert("Cadastro finalizado com sucesso.")
+                        construirPrincipal();
+                    }
+                    else alert("Login já utilizado.");
+                    return;
+                });
+            }
+            
+            function updateUserData(){
+				if($('#senha').val() === ""){
+					alert("Senha inválida.");
+					return;
+				}
+                if($('#senha').val() != $('#confirmarSenha').val()){
+                    alert("Confirmação de senha incorreta.");
+                    return;
+                }
+                
+                var i = 'nbg';
+                if($("#female").val() == 'on') i = 'f';
+                else if($("#male").val() == 'on') i = 'm';
+                
+                db.clientes.update(userID, {           
+                    nome: $("#nome").val(),
+                    telefone: $("#telefone").val(),
+                    email: $("#email").val(),
+                    nascimento: $("#birth").val(),
+                    gender: i,
+                    login: $("#login").val(),
+                    senha: $("#senha").val()
+                });
+                
+                alert("Update finalizado");
+            }
+
+            function construirLogin(){
+                $("#main_title").text("Login");
+                $("#main_body").text("");
+                $("#main_body").append(
+                    "<form align='center'>" +
+                        "Login: <input type='text' name='login' id='login'>" +
+                        "<br><br>" +
+                        "Senha: <input type='password' name='senha' id='senha'>" +
+                        "<br><br>" +
+                        "<button type='button' class='btn btn-primary' onclick='logar()'>Enviar</button>"+
+                    "</form>");
+            }
+            
+            function logar(){
+                db.clientes.where({
+                    login: $('#login').val()
+                }).first(function(cliente){
+					if(cliente.senha != $('#senha').val()){
+						alert("Senha incorreta.");
+						return;
+					}
+                    userID = cliente.id;
+            
+                    // mudando a nav bar
+                    $('#botaoCadastrar').html("<span class='glyphicon glyphicon-user'></span> Perfil");
+                    $('#botaoCadastrar').attr("onclick", "construirPerfil(0)");
+                    $('#botaoLogin').html("<span class='glyphicon glyphicon-log-in'></span> Sair");
+                    $('#botaoLogin').attr("onclick", "deslogar()");
+                    $('#botaoCarrinho').show()
+
+                    construirPrincipal();
+                });
+            }
+
+            function deslogar(){
+                userID = -1;
+            
+                // mudando a nav bar
+                $('#botaoCadastrar').html("<span class='glyphicon glyphicon-user'></span> Cadastrar");
+                $('#botaoCadastrar').attr("onclick", "construirCadastroUsuario()");
+                $('#botaoLogin').html("<span class='glyphicon glyphicon-log-in'></span> Login");
+                $('#botaoLogin').attr("onclick", "construirLogin()");
+                $('#botaoCarrinho').hide()
+
+                construirPrincipal();
+            }
+
+            function construirPerfil(tab){
+                $('#main_title').text("Perfil");
+                $('#main_body').text("");
+                
+                $('#main_body').append(
+                    "<nav class='navbar navbar-inverse'>"+
+                        "<div class='container-fluid'>"+
+                            "<ul class='nav navbar-nav'>"+
+                                "<li id='navBarLI0'><a onclick='construirPerfil(0)'>Informações</a></li>"+
+                                "<li id='navBarLI1'><a onclick='construirPerfil(1)'>Histórico de Compras</a></li>"+
+                                "<li id='navBarLT2'><a onclick='construirPerfil(2)'>Histórico de Serviços</a></li>"+
+                                "<li id='navBarLI3'><a onclick='construirPerfil(3)'>Cadastrar Animal</a></li>"+
+                                "<li id='navBarLI4'><a onclick='construirPerfil(4)'>Animais Cadastrados</a></li>"+
+                            "</ul>"+
+                        "</div>"+
+                    "</nav>");
+                
+                $('#navBarLI'+tab).attr('class', 'active');
+                if (tab == 0){
+                    db.clientes.get(userID).then(function(cliente){
+                        let string = "<form align='center'>" +
+                            "Nome: <input type='text' name='nome' id='nome' value='"+cliente.nome+"'>" +
+                            "<br><br>" +
+                            "Telefone: <input type='text' name=''telefone' id='telefone' value='"+cliente.telefone+"'>" +
+                            "<br><br>" +
+                            "Email: <input type='email' name='email' id='email' value='"+cliente.email+"'>" +
+                            "<br><br>" +
+                            "Data de Nascimento: <input type='date' name='nascimento' id='birth' value='"+cliente.nascimento+   "'>" +
+                            "<br><br>" +
+                            "Sexo: ";
+                            if(cliente.gender == 'm'){
+                                string += "<input type='radio' name='sexo' id='male' value='m' checked='checked'> Masculino  " +
+                                    "<input type='radio' name='sexo' id='female' value='f'> Feminino  " +
+                                    "<input type='radio' name='sexo' id='nonbinarygender' value='nbg'> Outro  ";
+                            } else if(cliente.gender == 'f'){
+                                string += "<input type='radio' name='sexo' id='male' value='m'> Masculino  " +
+                                    "<input type='radio' name='sexo' id='female' value='f' checked='checked'> Feminino  " +
+                                    "<input type='radio' name='sexo' id='nonbinarygender' value='nbg'> Outro  ";
+                            } else if(cliente.gender == 'nbg'){
+                                string += "<input type='radio' name='sexo' id='male' value='m'> Masculino  " +
+                                    "<input type='radio' name='sexo' id='female' value='f'> Feminino  " +
+                                    "<input type='radio' name='sexo' id='nonbinarygender' value='nbg' checked='checked'> Outro  ";
+                            }
+                            string += "<br><br><br>" +
+                            "Login: <input type='text' name='login' id='login' value='"+cliente.login+"'>" +
+                            "<br><br>" +
+                            "Nova senha: <input type='password' name='senha' id='senha'>" +
+                            "<br><br>" +
+                            "Confirmar nova senha: <input type='password' name='conf_senha' id='confirmarSenha'>" +
+                            "<br><br>" +
+                            "<button type='button' class='btn btn-primary' onclick='updateUserData()'>Atualizar Dados</button>" +
+                            "<br><br>" +
+                            "</form>";
+                            
+                        $('#main_body').append(string);
+                    });
+                }
+                else if(tab == 1){
+                    $('#main_body').append("<div class='row' id='perfilHistorico'></div>");
+                    construirCarrinho('#perfilHistorico', STATUS_DONE);
+                }
+                else if(tab == 2){
+                    $('#main_body').append("<div class='row' id='main_table' style='margin: 0px'></div>")
+                    let string = "<table class='table table-striped' style='background-color:white'>"+
+                        "<thead>"+
+                            "<th>Serviço</th>"+
+                            "<th>Data</th>"+
+                            "<th>Horário</th>"+
+                            "<th></th>"+
+                        "</thead><tbody>";
+                    
+                    let flag = 0;
+                    db.transaction('rw', db.servicosHorarios, db.servicos, function(){
+                        db.servicosHorarios.where("clienteid").equals(userID).each(function(servHorario){
+                            db.servicos.get(servHorario.servicoid).then(function(servico){
+                                flag = 1;
+								
+                                string += "<tr>"+
+                                    "<td>"+servico.nome+"</td>"+
+                                    "<td>"+servHorario.dia+"</td>" +
+                                    "<td>"+servHorario.horario+"</td>"+
+                                    "<td><button type='button' class='btn btn-danger' onclick='removerHorarioServico("+servHorario.id+")'>X</button></td"+
+                                "</tr>";
+                            });
+                        });
+                    });
+                    
+                    $('#main_table').text("Carregando...");
+                    
+                    new Promise((resolve, reject) =>{
+                        setTimeout(function(){ resolve(); }, 1000);
+                        
+                    }).then(function(resolve){
+                        $('#main_table').text("");
+                        if(flag == 1){
+                            string += "</tbody></table>";
+                            $('#main_table').append(string);
+                        }
+                        else {
+                            $('#main_table').append("<p style='text-align:center'>Nenhum serviço reservado.</p>");
+                        }
+                    });
+                }
+                else if(tab == 3){
+                    $('#main_body').append(
+                        "<form align='center'>" +
+                        "Nome do animal: <input type='text' name='nome' id='nome'>" +
+                        "<br><br>" +
+                        "Data de Nascimento: <input type='date' name='nascimento' id='birth'>" +
+                        "<br><br>" +
+                        "Sexo: " +
+                        "<input type='radio' name='sexo' id='male' value='m'> Masculino  " +
+                        "<input type='radio' name='sexo' id='female' value='f'> Feminino  " +
+                        "<br><br><br>" +
+                        "Tipo de animal (ex: cachorro, gato, cobra): <input type='text' name='especie' id='especie'>" +
+                        "<br><br>" +
+                        "Raça: <input type='text' name='raca' id='raca'>" +
+                        "<br><br>" +
+                        "<p>Banco de Dados (Dexie) não possui suporte direto para conter imagens.</p>" +
+                        "<br><br>" +
+                        "<button type='button' class='btn btn-primary' onclick='addClientAnimal()'>Confirmar cadastro</button>" +
+                        "<br><br>" +
+                        "</form>");
+                }
+                else if(tab == 4){
+                    $('#main_body').append("<div class='row' id='main_table' style='margin: 0px'></div>")
+                    let string = "<table class='table table-striped' style='background-color:white'>"+
+                        "<thead>"+
+                            "<th>Nome do Animal</th>"+
+                            "<th>Data de Nascimento</th>"+
+                            "<th>Sexo</th>"+
+                            "<th>Tipo</th>"+
+                            "<th>Raça</th>"+
+                            "<th></th>"+
+                        "</thead><tbody>";
+                    
+                    let flag = 0;
+                    db.animalDeCliente.where("donoid").equals(userID).each(function(animal){
+                        flag = 1;
+                        string += "<tr>"+
+                            "<td>"+animal.nome+"</td>"+
+                            "<td>"+animal.nascimento+"</td>";
+                        if(animal.sexo == 'm') string += "<td>Macho</td>";
+                        else string += "<td>Fêmea</td>";
+                        string += "<td>"+animal.tipo+"</td>"+
+                            "<td>"+animal.raca+"</td>"+
+                            "<td><button type='button' class='btn btn-danger' onclick='removerClienteAnimal("+animal.id+")'>X</button></td"+
+                        "</tr>";
+                    });
+                    
+                    $('#main_table').text("Carregando...");
+                    
+                    new Promise((resolve, reject) =>{
+                        setTimeout(function(){ resolve(); }, 1000);
+                        
+                    }).then(function(resolve){
+                        $('#main_table').text("");
+                        if(flag == 1){
+                            string += "</tbody></table>";
+                            $('#main_table').append(string);
+                        }
+                        else {
+                            $('#main_table').append("<p style='text-align:center'>Nenhum animal cadastrado.</p>");
+                        }
+                    });
+                }
+            }
+
+            function removerHorarioServico(id){
+                db.servicosHorarios.delete(id).then(function(){
+                    construirPerfil(2);
+                });
+            }
+            
+            function addClientAnimal(){
+                let gender = 'm';
+                if($('#female').val() == 'on') gender = 'f';
+            
+                db.animalDeCliente.put({
+                    donoid: userID,
+                    nome: $('#nome').val(),
+                    nascimento: $('#birth').val(),
+                    sexo: gender,
+                    tipo: $('#especie').val(),
+                    raca: $('#raca').val()
+                });
+                
+                alert("Animal cadastrado com sucesso.");
+            }
+            
+            function removerClienteAnimal(id){
+                db.animalDeCliente.delete(id).then(function(){
+                    construirPerfil(4);
+                });
+            }
+            
+            function construirCarrinho(target, targetStatus){
+                $(target).text("Carrinho de Compras");
+                
+                let string = "<table class='table table-striped' style='background-color:white'>"+
+                    "<thead>"+
+                        "<th>Nome do Produto</th>"+
+                        "<th>Quantidade</th>"+
+                        "<th>Preço Individual</th>"+
+                        "<th>Preço Total</th>";
+                if(targetStatus == STATUS_PENDING) string += "<th></th>";
+                string += "</thead><tbody>";
+                
+                let flag = 0, custoTotal = 0;
+                db.transaction('rw', db.carrinho, db.produtos, db.animais, function(){
+                    db.carrinho.where("idcliente").equals(userID).each(function(carProd){
+                        if(carProd.status != targetStatus) return;
+                        flag = 1;
+                        
+                        if(carProd.tipoproduto == PROD_PROD){
+                            db.produtos.get(carProd.idproduto).then(function(produto){
+                                custoTotal += (produto.precoAtual*carProd.produtoqnt);
+                                string += "<tr>";
+                                string += "<td>"+produto.nome+"</td>";
+                                string += "<td>"+carProd.produtoqnt+"</td>";
+                                string += "<td>R$"+produto.precoAtual+"</td>"
+                                string += "<td>R$"+(produto.precoAtual*carProd.produtoqnt)+"</td>";
+                                if(targetStatus == STATUS_PENDING) string += "<td><button type='button' class='btn btn-danger' onclick='removerCarrinho("+carProd.id+")'>X</button>"
+                                string += "</tr>";
+                            });
+                        }
+                        else if(carProd.tipoproduto == PROD_ANI){
+                            db.animais.get(carProd.idproduto).then(function(animal){                                
+                                custoTotal += (animal.precoAtual*carProd.produtoqnt);
+                                string += "<tr>";
+                                string += "<td>"+animal.nome+"</td>";
+                                string += "<td>"+carProd.produtoqnt+"</td>";
+                                string += "<td>R$"+animal.precoAtual+"</td>"
+                                string += "<td>R$"+(animal.precoAtual*carProd.produtoqnt)+"</td>";
+                                if(targetStatus == STATUS_PENDING) string += "<td><button type='button' class='btn btn-danger' onclick='removerCarrinho("+carProd.id+")'>X</button>"
+                                string += "</tr>";
+                            });
+                        }
+                    });
+                });
+                
+                $(target).text("Carregando...");
+                
+                new Promise((resolve, reject) =>{
+                    setTimeout(function(){ resolve(); }, 1000);
+                    
+                }).then(function(resolve){
+                    $(target).text("");
+                    if(flag == 1){
+                        string += "<tr><td>Total</td><td></td><td></td><td>R$"+custoTotal+"</td><td></td></tr>";
+                        string += "</tbody></table>";
+                        $(target).append(string);
+                        if(targetStatus == STATUS_PENDING) $(target).append(
+                            "<button type='button' class='btn btn-primary' onclick='finalizarCompra()'>Finalizar Compra</button>");
+                    }
+                    else {
+                        if(targetStatus == STATUS_PENDING) $(target).append("<p style='text-align:center'>Carrinho vazio.</p>");
+                        else if(targetStatus == STATUS_DONE) $(target).append("<p style='text-align:center'>Histórico vazio.</p>");
+                    }
+                });
+            }
+            
+            function finalizarCompra(){
+                db.transaction('rw', db.carrinho, db.produtos, db.animais, function(){
+                    db.carrinho.where("idcliente").equals(userID).each(function(carProd){
+                        db.carrinho.update(carProd.id, {
+                            status: STATUS_DONE
+                        }).then(function(){
+                            construirCarrinho('#main_body', STATUS_PENDING);
+                        });
+                    });
+                });
+            }
+            
+        </script>
+    </body>
+</html>
