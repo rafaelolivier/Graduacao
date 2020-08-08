@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <title>Structuring A Page Of Content</title>
+        <style>
+            body{
+                background-color: lightgreen;
+            }
+            nav{
+                background-color: darkgreen;
+            }
+            h1{
+                text-align: center;
+                text-decoration-style: wavy;
+            }
+            h2{
+                text-align: center;
+                text-decoration-style: dashed;
+            }
+            article{
+                float: left;
+                background-color: darkgreen;
+                width: 59.5%;
+            }
+            aside{
+                float: right;
+                background-color: darkgreen;
+                width: 40%;
+            }
+            img{
+                margin-left: 5%;
+                text-align: center;
+            }
+            .clearfix{
+                clear: both;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Bird Watching</h1>
+        <nav>
+            <div>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Get Started</a></li>
+                    <li><a href="#">Photos</a></li>
+                    <li><a href="#">Gear</a></li>
+                    <li><a href="#">Forum</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main>
+            <article>
+                <h2>Welcome!</h2>
+                <p>Welcome to our fake bird site. If this were a real site, it would be an ideal place to learn about birdwatching. Beginner or Expert, all bird watchers are welcome here!</p>
+                <p>This site have a list of another things though:</p>
+                <ul>
+                    <li><a>Header</a></li>
+                    <li><a>Navigation Menu</a></li>
+                    <li><a>Main Content</a></li>
+                    <li><a>Welcome Text</a></li>
+                    <li><a>The Image Sidebar</a></li>
+                    <li><a>The Footer</a></li>
+                </ul>
+                <p>So don't waste time, this is a fake site! Go look for a true one!</p>
+                <p>This page now have enough text so the footer actually look like a footer!</p>
+            </article>
+            <aside>
+                <h2>Favorite Photos</h2>
+                <img src="passaro1.jpeg" class="img-rounded" alt="Passaro1" style="width: 35%;">
+                <img src="passaro2.jpeg" class="img-rounded" alt="Passaro2" style="width: 35%;">
+                <img src="passaro3.jpeg" class="img-rounded" alt="Passaro3" style="width: 35%;">
+                <img src="passaro4.jpeg" class="img-rounded" alt="Passaro4" style="width: 35%;">
+            </aside>
+        </main>
+        
+        <footer>
+            <div class="clearfix"></div>
+            <p>The Clearfix made the footer appear at the foot. This fake website is CCO. Blablabla.</p>
+        </footer>
+    </body>
+</html>

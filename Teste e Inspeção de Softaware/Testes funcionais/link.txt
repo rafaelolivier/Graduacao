@@ -1,0 +1,16 @@
+
+Videos coursera: Introdução ao teste de software
+https://pt.coursera.org/learn/intro-teste-de-software
+
+
+Ver livro texto da disciplina capítulo sobre teste funcional
+
+
+Vídeo sobre a ferramenta de teste Sikuli
+https://www.youtube.com/watch?v=WA5iic6eUug
+
+Tutorial sobre a SikuliX
+https://www.youtube.com/watch?v=VdCOg1bCmGo&list=PL1A2CSdiySGJJNe3WzCezcI7by5SPfJTS
+
+Ferramenta de teste sikuliX
+http://sikulix.com/

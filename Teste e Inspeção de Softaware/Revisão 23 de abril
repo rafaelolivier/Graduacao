@@ -1,0 +1,60 @@
+Revisão de Erros - (23/04)
+
+Projeto - Jabref
+Pacote - org.jabref.model.strings
+Classe - StringUtil.java
+
+Considerações Gerais
+
+Código - O que é: 
+Classe que manipula strings - ex: Linha 466: IntValueOf: transforma string para inteiro
+
+----------
+
+Primeira Interação:
+
+O sonar não encontrou muito. Destaque para WhiteSpace Wrap (lin195) - Eclipse acusa descontinuação.
+
+linha 203 - Método para comparar string vazia não é eficiente
+Variados "erros" de estilo de codificação.
+
+
+Adicionar Consultor privado
+
+
+função getPart - lin 73:	
+	há uma atribuição que talvez não precise ser feita (necessário rever)
+	
+Modularizar classe
+
+isInCurlyBrackets - lin 416:
+	nome parecido com isInSquareBrackets(lin 441) - mas as funções não são parecidas (confundível)
+	juntar as duas funções ou mudar o nome
+
+
+Problemas de estilo
+	comentários desnecessários e funções sem comentários, outras com bloco com leitura dificil
+	Função IntValueOf "porca".
+	padronizar os comentários
+	função join (lin 173) - bem feita (pode servir de exemplo para as outras
+
+--------------------------------------------------------
+
+
+Segunda interação:
+
+inCurlyBrackets complexidade alta - possivel refatorá-la para facilitar a manutenção
+
+Adicionar teste no código - nem todos os métodos são testados (1 geral ou 1 para cada um)
+
+Linha 22 - variável não é usada em nenhum lugar na classe (mas como é público pode estar sendo usada em outro lugar do código)
+
+Pode ser útil não criar várias classes, mas uma hierarquia de classes. (várias funções com algo em comum)
+poderia concentrar todas as funções no pacote
+utilizar padrão abstract
+
+Fazer mais operações lógicas com mais etapas na função "porca" IntValueOf para melhorar a leitura - mas manter o desempenho
+
+Não há um padrão de espaçamento em todas as funções
+
+Colocar 'final' em variáveis que não mudam o valor.
